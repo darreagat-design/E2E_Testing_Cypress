@@ -1,0 +1,18 @@
+{
+  "name": "cafe-central",
+  "private": true,
+  "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "install:all": "pnpm install",
+    "dev": "pnpm --parallel --filter @cafe-central/api --filter @cafe-central/web dev",
+    "dev:test": "cross-env NODE_ENV=testing DATABASE_PATH=./data/cafe-central-testing.sqlite pnpm --parallel --filter @cafe-central/api --filter @cafe-central/web dev",
+    "build": "pnpm --filter @cafe-central/api build && pnpm --filter @cafe-central/web build",
+    "start": "pnpm --filter @cafe-central/api start",
+    "cy:open": "cypress open --e2e",
+    "cy:run": "cypress run --e2e"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "cypress": "16.1.1"
+  }
+}
