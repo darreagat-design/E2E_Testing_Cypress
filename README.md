@@ -52,4 +52,6 @@ Con ambos servidores activos, abre el runner interactivo con `pnpm cy:open` o ej
 
 La suite incluye el smoke del catalogo y tres recorridos de pedidos: confirmacion exitosa con verificacion de persistencia por API, carrito vacio sin POST y fallo HTTP 500 con conservacion del carrito y reintento exitoso. Cada prueba restablece productos, stock y ordenes con `POST /api/test/reset` en `beforeEach()`. El fallo controlado se simula con `cy.intercept()` y las pruebas no usan esperas numericas.
 
-La configuracion de CI se deja para un sprint posterior.
+## Integracion continua
+
+El workflow de GitHub Actions se ejecuta en cada `push`, `pull_request` y cuando se inicia manualmente. Instala con pnpm usando el lockfile, compila con `pnpm build`, inicia frontend y API con `pnpm dev:test` (API en modo `testing`), espera a que respondan el frontend y la API y ejecuta Cypress. Si el job falla, guarda screenshots y videos de Cypress como artifacts para revisar el fallo.

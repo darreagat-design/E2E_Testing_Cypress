@@ -1,0 +1,56 @@
+name: Cypress E2E
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cypress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.12.1
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Run Cypress E2E
+        uses: cypress-io/github-action@v7
+        with:
+          install: false
+          start: pnpm dev:test
+          wait-on: 'http://localhost:5173,http://localhost:3000/api/health'
+          wait-on-timeout: 120
+          command: pnpm cy:run
+
+      - name: Upload Cypress failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cypress-failure-evidence
+          path: |
+            cypress/screenshots
+            cypress/videos
+          if-no-files-found: ignore
+          retention-days: 7
