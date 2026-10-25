@@ -9,10 +9,15 @@
     "build": "pnpm --filter @cafe-central/api build && pnpm --filter @cafe-central/web build",
     "start": "pnpm --filter @cafe-central/api start",
     "cy:open": "cypress open --e2e",
-    "cy:run": "cypress run --e2e"
+    "cy:run": "cypress run --e2e",
+    "pact:consumer": "vitest run pact/consumer/orders.consumer.pact.spec.ts",
+    "pact:provider": "pnpm --filter @cafe-central/api build && vitest run pact/provider/orders.provider.pact.spec.ts",
+    "pact:test": "pnpm pact:consumer && pnpm pact:provider"
   },
   "devDependencies": {
+    "@pact-foundation/pact": "^17.1.4",
     "cross-env": "^10.1.0",
-    "cypress": "16.1.1"
+    "cypress": "16.1.1",
+    "vitest": "^5.0.5"
   }
 }

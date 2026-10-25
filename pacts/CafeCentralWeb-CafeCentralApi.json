@@ -1,0 +1,159 @@
+{
+  "consumer": {
+    "name": "CafeCentralWeb"
+  },
+  "interactions": [
+    {
+      "description": "a request for missing order 999",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an order with id 999 does not exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/orders/999"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "error": "No encontramos ese pedido."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request for order 1",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an order with id 1 exists"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/orders/1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": 1,
+            "items": [
+              {
+                "name": "Café americano",
+                "productId": 1,
+                "quantity": 2,
+                "subtotal": 30,
+                "unitPrice": 15
+              }
+            ],
+            "total": 30
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ]
+            },
+            "$.items[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[*].productId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[*].quantity": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[*].subtotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[*].unitPrice": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.total": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "CafeCentralApi"
+  }
+}
