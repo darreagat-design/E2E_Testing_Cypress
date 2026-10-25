@@ -61,7 +61,7 @@ flowchart LR
   subgraph contract_generation["1. Generación del contrato"]
     direction LR
     web[CafeCentralWeb] --> client[OrdersClient]
-    client -->|getOrder(id)| mock[Pact Mock Server]
+    client -->|"getOrder(id)"| mock[Pact Mock Server]
     mock -->|respuestas simuladas| client
     client --> pact_tests[Pact valida interacciones]
     pact_tests -->|genera contrato| contract["pacts/CafeCentralWeb-CafeCentralApi.json"]
