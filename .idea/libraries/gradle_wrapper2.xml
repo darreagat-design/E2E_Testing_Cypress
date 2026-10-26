@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gradle-wrapper2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/node_modules/.pnpm/react-native@0.86.3_@babel+_7a8e880b655e423ddae4bc205f6cb3fe/node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

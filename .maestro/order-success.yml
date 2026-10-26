@@ -1,0 +1,31 @@
+appId: com.cafecentral.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: catalog-screen
+    timeout: 15000
+- assertVisible:
+    id: catalog-screen
+- assertVisible:
+    id: product-americano
+- tapOn:
+    id: add-americano
+- assertVisible:
+    id: cart-count
+    text: "1"
+- tapOn:
+    id: cart-button
+- assertVisible:
+    id: cart-screen
+- assertVisible:
+    id: cart-total
+    text: "Q15[.]00"
+- tapOn:
+    id: confirm-order
+- assertVisible:
+    id: order-success
+- assertVisible:
+    id: order-id
+    text: "#1"

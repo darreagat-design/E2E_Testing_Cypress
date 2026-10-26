@@ -14,3 +14,4 @@ cypress/videos/
 *.db-*
 *.log
 *.tsbuildinfo
+apps/mobile/.expo/

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="expo.modules.asset-57.0.20-sources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/node_modules/.pnpm/expo@57.0.31_@babel+core@7._bb14d56bd00b7d5f8958cd030a75ef1f/node_modules/expo-asset/local-maven-repo/expo/modules/asset/expo.modules.asset/57.0.20/expo.modules.asset-57.0.20-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

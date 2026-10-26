@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Cafe Central Mobile",
+    "slug": "cafe-central-mobile",
+    "version": "1.0.0",
+    "platforms": [
+      "android"
+    ],
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "android": {
+      "package": "com.cafecentral.mobile",
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e2c743f6-e313-4fb7-8a29-e92749fdd5c6"
+      }
+    }
+  }
+}

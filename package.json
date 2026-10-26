@@ -12,7 +12,11 @@
     "cy:run": "cypress run --e2e",
     "pact:consumer": "vitest run pact/consumer/orders.consumer.pact.spec.ts",
     "pact:provider": "pnpm --filter @cafe-central/api build && vitest run pact/provider/orders.provider.pact.spec.ts",
-    "pact:test": "pnpm pact:consumer && pnpm pact:provider"
+    "pact:test": "pnpm pact:consumer && pnpm pact:provider",
+    "mobile:start": "pnpm --filter @cafe-central/mobile start",
+    "mobile:android": "pnpm --filter @cafe-central/mobile android",
+    "mobile:typecheck": "pnpm --filter @cafe-central/mobile typecheck",
+    "mobile:apk": "pnpm --filter @cafe-central/mobile build:apk"
   },
   "devDependencies": {
     "@pact-foundation/pact": "^17.1.4",

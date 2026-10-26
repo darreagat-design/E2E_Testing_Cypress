@@ -137,3 +137,107 @@ return res.json({ ...order, total: String(order.total), items });
 Luego ejecuta `pnpm pact:provider`. El comando reconstruye la API con el cambio y debe fallar porque el contrato requiere que `total` sea un número. Restaura la línea original y ejecuta `pnpm pact:provider` para comprobar la compatibilidad nuevamente, o `pnpm pact:test` para volver a ejecutar consumidor y proveedor.
 
 La versión entregada conserva `total` como número y debe pasar ambas verificaciones. Una vez revisada la entrega, el usuario puede marcarla y publicarla con `git tag pact-final` y `git push origin pact-final`; esos comandos no se ejecutan automáticamente.
+
+## Aplicación móvil para Maestro
+
+La aplicación móvil está en `apps/mobile`. Usa React Native 0.86.3, Expo 57.0.31 (SDK 57) y TypeScript. Su versión es `1.0.0` y el `applicationId` Android es `com.cafecentral.mobile`.
+
+El catálogo es local y determinista, el carrito se mantiene en memoria y la app no utiliza backend ni servicios externos en tiempo de ejecución. Los flows de Maestro están en `.maestro/`.
+
+### Entorno validado
+
+La ejecución final de los tres escenarios, tanto individualmente como en conjunto, se comprobó en Windows con Maestro CLI 2.11.0 ejecutado nativamente, Java JDK 17 o superior, Android Studio y un Android Emulator Pixel 9 con Android API 37. El dispositivo se identificó en ADB como `emulator-5554`. Se instaló la aplicación mediante APK con app ID `com.cafecentral.mobile`.
+
+Para esta entrega se utilizó Maestro directamente en Windows. Si se utiliza WSL, la detección de dispositivos puede requerir configuración adicional entre ADB de Windows y WSL; el procedimiento validado aquí usa Maestro en Windows.
+
+### Requisitos e instalación de Maestro en Windows
+
+Se requiere Java 17 o superior, Android Studio con Android Emulator, y Maestro CLI. ADB puede estar disponible en `PATH` o ejecutarse directamente desde Android SDK Platform Tools; no es obligatorio agregarlo al `PATH`.
+
+Descarga el ZIP oficial de Maestro desde la [guía de instalación de Maestro CLI](https://docs.maestro.dev/maestro-cli/how-to-install-maestro-cli), extrae su contenido en una ubicación estable (por ejemplo, `C:\maestro`) y localiza la carpeta que contiene el comando de Maestro. La ruta depende de cómo se extraiga el ZIP; en el entorno validado quedó en:
+
+```text
+C:\maestro\maestro\bin
+```
+
+Agrega la carpeta `bin` encontrada al `PATH` de Windows, o temporalmente a la sesión actual de PowerShell. Para la ruta validada:
+
+```powershell
+$env:Path += ";C:\maestro\maestro\bin"
+maestro --version
+```
+
+El resultado utilizado fue Maestro CLI 2.11.0. Verifica la ubicación real de `bin` en tu instalación antes de agregarla al `PATH`.
+
+### Generar e instalar el APK
+
+Desde la raíz del monorepo, `pnpm mobile:apk` utiliza EAS Build con el perfil `preview` para generar una APK descargable. EAS puede solicitar iniciar sesión o crear un proyecto EAS, así como generar credenciales Android/keystore. EAS se usa únicamente para compilar; no es una dependencia de la aplicación en tiempo de ejecución.
+
+```bash
+pnpm mobile:apk
+```
+
+Descarga el APK generado. Con el emulador iniciado o el dispositivo conectado, puedes comprobar ADB e instalarlo mediante `adb` si está en `PATH`:
+
+```powershell
+adb devices
+adb install -r "ruta\al\cafe-central-mobile.apk"
+adb shell pm path com.cafecentral.mobile
+```
+
+En Windows también puedes invocar ADB desde Platform Tools usando su ruta completa (sustituye `<usuario>` por el usuario local, sin guardar ese dato en el proyecto):
+
+```powershell
+& "C:\Users\<usuario>\AppData\Local\Android\Sdk\platform-tools\adb.exe" devices
+& "C:\Users\<usuario>\AppData\Local\Android\Sdk\platform-tools\adb.exe" install -r "ruta\al\cafe-central-mobile.apk"
+& "C:\Users\<usuario>\AppData\Local\Android\Sdk\platform-tools\adb.exe" shell pm path com.cafecentral.mobile
+```
+
+Antes de ejecutar Maestro, `adb devices` debe mostrar un dispositivo con estado `device`. En el entorno validado apareció:
+
+```text
+emulator-5554    device
+```
+
+El comando `pm path` debe devolver la ruta instalada del paquete `com.cafecentral.mobile`.
+
+### Flows y escenarios
+
+Los flows usan `testID` de React Native, expuestos como identificadores Android y seleccionados mediante `id` en Maestro. Algunos ejemplos son `catalog-screen`, `add-americano`, `cart-button`, `cart-count`, `cart-total`, `confirm-order` y `order-success`. Así, las interacciones se dirigen a elementos identificados en vez de depender de coordenadas.
+
+- **`.maestro/order-success.yml`** agrega Café americano, verifica el contador, abre el carrito, comprueba Q15.00, confirma el pedido y verifica el éxito y el identificador.
+- **`.maestro/empty-cart-validation.yml`** abre el carrito vacío, comprueba el mensaje de validación y el total Q0.00, verifica que confirmar esté deshabilitado y que no aparezca el estado de éxito.
+- **`.maestro/back-navigation.yml`** abre el detalle de Café americano, agrega el producto, utiliza la navegación atrás nativa de Android, verifica que el contador se conserve, abre el carrito y comprueba el producto y Q15.00.
+
+Cada flow comienza con:
+
+```yaml
+launchApp:
+  clearState: true
+```
+
+Esto deja cada escenario independiente, con el carrito vacío al inicio y sin depender del orden de ejecución. Como los datos son locales, no hay base de datos ni backend que limpiar.
+
+### Ejecutar los flows
+
+Desde la raíz del monorepo, ejecuta cada escenario individualmente:
+
+```bash
+maestro test .maestro/order-success.yml
+maestro test .maestro/empty-cart-validation.yml
+maestro test .maestro/back-navigation.yml
+```
+
+O ejecuta todos los flows del directorio:
+
+```bash
+maestro test .maestro
+```
+
+Los cuatro comandos se comprobaron durante la preparación de la entrega. Para el desarrollo móvil también están disponibles `pnpm install:all`, `pnpm mobile:start`, `pnpm mobile:android` y `pnpm mobile:typecheck`.
+
+### Limitaciones de la automatización móvil
+
+- La ejecución final se verificó en Android, no en iOS, con un Pixel 9 y Android API 37; no se probaron múltiples versiones de Android.
+- La app usa datos locales y los flows no validan comunicación con backend, red, autenticación ni servicios externos.
+- Los flows comprueban estados visibles y navegación móvil, no reglas internas mediante pruebas unitarias.
